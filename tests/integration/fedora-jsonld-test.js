@@ -2,6 +2,7 @@ import { module, test, skip } from 'qunit';
 import { setupApplicationTest } from 'ember-qunit';
 import { run } from "@ember/runloop";
 import ENV from 'dummy/config/environment';
+import RSVP from 'rsvp';
 
 // Test the Fedora JSON-LD adapter hitting a live Fedora instance
 
@@ -21,6 +22,37 @@ module('Integration | Adapter | fedora jsonld', function(hooks) {
     let adapter = this.owner.lookup('adapter:application');
 
     return adapter.setupFedora(['cow', 'barn']);
+  });
+
+  integrationTest('simultaneous save of ten barns', function(assert) {
+    let store = this.owner.lookup('service:store');
+    let count = 10;
+
+    let result = run(() => {
+      let barns = [];
+
+      for (var i = 0; i < count; i++) {
+        let barn = store.createRecord('barn', {name: 'barn ' + i});
+        assert.ok(barn);
+        barns.push(barn);
+      }
+
+      return RSVP.all(barns.map(barn => barn.save()));
+    }).then(barns => {
+      assert.step('save');
+
+      assert.ok(barns);
+      assert.equal(barns.length, count);
+
+      barns.forEach(barn => {
+        assert.ok(barn.get('id'));
+        assert.ok(barn.get('name'));
+      });
+    });
+
+    return result.then(() => {
+      assert.verifySteps(['save'])
+    });
   });
 
   integrationTest('findAll on empty type', function(assert) {

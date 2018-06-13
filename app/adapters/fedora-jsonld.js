@@ -47,6 +47,15 @@ export default DS.Adapter.extend({
       Object.keys(headers).forEach((key) => xhr.setRequestHeader(key, headers[key]));
     };
 
+    options.statusCode = {
+      302: function(data, moo, xhr) {
+        console.log(` >> Found HTTP status 302. ${xhr.responseURL}`);
+        console.log(data);
+        throw new Error(`redirect:${xhr.responseURL}`);
+        // $(data).find('input[type="submit"]').click();
+      }
+    }
+
     // Needed for cross-site support.
     options.xhrFields = {withCredentials: true};
 

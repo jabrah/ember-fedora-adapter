@@ -56,6 +56,11 @@ export default DS.Serializer.extend({
   normalizeResponse(store, primaryModelClass, payload, id, requestType) {
     //console.log('normalizeResponse for ' + requestType);
     //console.log(payload);
+    try {
+      JSON.parse(payload);
+    } catch(err) {
+      throw new Error('Non-JSON response received.');
+    }
 
     // Extract dataURI prefix if contained by inline @context
     let context = payload['@context'];

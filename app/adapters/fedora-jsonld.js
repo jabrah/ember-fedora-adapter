@@ -59,7 +59,12 @@ export default DS.Adapter.extend({
     // Needed for cross-site support.
     options.xhrFields = {withCredentials: true};
 
-    return $.ajax(options);
+    return $.ajax(options).then((data, stuff, xhr) => {
+      if (xhr.status == 302) {
+        console.log(' ember-fedora-adapter : returned status 302');
+      }
+      return data;
+    });
   },
 
   // Return a Promise which delete an object and its tombstone from Fedora.

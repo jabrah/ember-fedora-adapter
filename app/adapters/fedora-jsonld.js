@@ -247,6 +247,13 @@ export default DS.Adapter.extend({
   // Turn Elasticsearch results into a JSON-LD @graph suitable for normalizeResponse.
   // Return metadata about the search through info object.
   _parse_elasticsearch_result(result, info) {
+    if (typeof result === 'string') {
+      console.log(' ember-fedora-adapter: result is a STRING :(');
+      return result;
+    } else if (!result) {
+      console.log(' ember-fedora-adapter: no result object');
+      return;
+    }
     if (info) {
       info.total = result.hits.total;
     }

@@ -315,7 +315,10 @@ export default DS.Adapter.extend({
     return this._ajax(url, 'POST', {
       data: JSON.stringify(data),
       headers: {'Content-Type': 'application/json; charset=utf-8'},
-    }).then(result => this._parse_elasticsearch_result(result, info));
+    }).then((result) => {
+      console.log(` ember-fedora-adapter#query\n${result}`);
+      this._parse_elasticsearch_result(result, info);
+    });
   },
 
   // Return the path relative to the adapter root in the Fedora repository
